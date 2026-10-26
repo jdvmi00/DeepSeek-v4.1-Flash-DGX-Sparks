@@ -215,6 +215,11 @@ class EngramLoader(importlib.abc.Loader):
             if os.environ.get('DSV41_L2_PREFETCH', '0').strip() not in ('0', 'off', 'false', ''):
                 from l2_prefetch import install_roce as install_l2_prefetch_roce
                 install_l2_prefetch_roce(module)
+        elif module.__name__ == 'sglang.srt.model_loader.loader':
+            # DSV41_SHARDED_CACHE: each rank's loaded weights saved once, copied straight back
+            # on later boots instead of re-reading and re-slicing the checkpoint.
+            from sharded_cache import install as install_sharded_cache
+            install_sharded_cache(module)
         elif module.__name__ == 'sglang.srt.managers.schedule_batch':
             from loop_abort import install as install_loop_abort
             install_loop_abort(module)
@@ -237,10 +242,14 @@ class EngramFinder(importlib.abc.MetaPathFinder):
         if (fullname == 'sglang.srt.model_loader.utils' and
                 os.environ.get('DSV41_SERIAL_WEIGHT_LOAD', '0') != '1'):
             return None
+        if (fullname == 'sglang.srt.model_loader.loader' and
+                not os.environ.get('DSV41_SHARDED_CACHE', '').strip()):
+            return None
         # The second tuple is the TP4 production line. start-tp4.sh is what puts
         # DSV41_LAUNCHER=tp4 in the container; ./start.sh never intercepts these.
         if fullname not in ('sglang.srt.layers.engram',
                             'sglang.srt.model_loader.utils',
+                            'sglang.srt.model_loader.loader',
                             'sglang.srt.layers.quantization.fp8_utils',
                             'sglang.srt.layers.quantization.fp8',
                             'sglang.srt.model_executor.model_runner',
