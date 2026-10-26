@@ -48,7 +48,8 @@ _VERIFY = os.environ.get("DSV41_SHARDED_VERIFY", "0").strip() not in ("0", "", "
 _ENV_PREFIXES = ("DSV41_", "SGLANG_", "B12X_")
 _ENV_RUNTIME = ("DSV41_SHARDED_", "DSV41_STATS_", "DSV41_LOOP_", "DSV41_ROCE_", "SGLANG_ROCE_",
                 "B12X_ROCE_", "B12X_COMPILE_CACHE_DIR", "DSV41_IO_THREADS", "DSV41_FAST_LOAD_INFLIGHT_GB",
-                "DSV41_FAST_LOAD_DEBUG", "DSV41_FAST_LOAD_MEMLOG", "SGLANG_BUILD_", "SGLANG_IMAGE_TAG")
+                "DSV41_FAST_LOAD_DEBUG", "DSV41_FAST_LOAD_MEMLOG", "SGLANG_BUILD_", "SGLANG_IMAGE_TAG",
+                "SGLANG_RUN_ID")
 # launch_server flags that only size or address the runtime (dropped with their values)
 _ARG_RUNTIME = {"--host", "--port", "--served-model-name", "--mem-fraction-static", "--context-length",
                 "--max-running-requests", "--chunked-prefill-size", "--cuda-graph-max-bs",
